@@ -18,10 +18,6 @@
 #include "Renderer.hpp"
 #include "StarSystem.hpp"
 
-#define MINUTE  (60.0)
-#define HOUR    (MINUTE * 60.0)
-#define JULIAN  (HOUR * 24.0)
-
 static int iterations = 0;
 
 std::string dateString(time_t seconds) {
@@ -44,11 +40,11 @@ void onKeyDown(Renderer& r, SDL_Scancode key) {
             r.rotate(0, 2, 0);
             break;
         case SDL_SCANCODE_UP:
-            iterations += 2;
+            iterations *= 2;
             break;
         case SDL_SCANCODE_DOWN:
-            iterations -= 2;
-            if(iterations < 0) { iterations = 0; }
+            iterations /= 2;
+            if(iterations < 1) { iterations = 1; }
             break;
         case SDL_SCANCODE_SPACE:
             iterations = 0;

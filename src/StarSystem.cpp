@@ -12,6 +12,7 @@
 #include "StarSystem.hpp"
 #include "Physics.hpp"
 #include "Orbit.hpp"
+#include "Model.hpp"
 
 using json = nlohmann::json;
 
@@ -50,10 +51,11 @@ StarSystem::StarSystem(std::istream& jsonFile, long double julianDate) {
     };
     
     bodies_.push_back(Body{
-        star["name"].get<std::string>(),
-        Renderer::Color::BLUE,
+        get<std::string>(star, "name", "SYSTEM a"),
+        Renderer::Color::YELLOW,
         state,
-        star["mass"].get<long double>() * Physics::Msol
+        get(star, "mass", 1.0) * Physics::Msol,
+        get(star, "radius", 1.0) * Physics::Rsol
     });
     
     
@@ -63,6 +65,7 @@ StarSystem::StarSystem(std::istream& jsonFile, long double julianDate) {
     std::vector<Orbit> orbits_;
     
     for(auto& body : data["bodies"]) {
+        char ID = 'b';
         
         auto color = Renderer::Color::LIGHTBLUE;
         if(body.count("color") > 0) {
@@ -91,7 +94,13 @@ StarSystem::StarSystem(std::istream& jsonFile, long double julianDate) {
             Vector3{}
         };
         
-        bodies_.push_back(Body{body["name"], color, state, mass});
+        bodies_.push_back(Body{
+            get<std::string>(body, "name", "SYSTEM" + std::to_string(ID++)),
+            color,
+            state,
+            mass,
+            get(body, "radius", 1.0) * Physics::Rearth
+        });
         orbits_.push_back(orbit);
     }
     
@@ -181,13 +190,9 @@ double StarSystem::advance(int iterations, double delta) {
 void StarSystem::render(Renderer &renderer) {
     for(auto& body: bodies_) {
         renderer.setColor(body.color);
-        
-        if(body.name == bodies_[0].name) {
-            renderer.drawCircle(body.state.position, 6);
-        }
-        renderer.drawCircle(body.state.position, 5);
-        renderer.drawString(body.state.position + Vector3{40e7, 40e7, 0}, body.name);
-        
+
+        renderer.drawModel(Model::sphereInstance(), body.state.position, body.radius);
+        renderer.drawString(body.state.position + Vector3{0, 0, body.radius}, body.name);
         Vector3 previous = body.state.position;
         
         int it = TRAIL_SIZE-1;

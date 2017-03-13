@@ -24,6 +24,7 @@ public:
         Renderer::Color     color;
         Integrator::State   state;
         long double         mass;
+        long double         radius;
         std::deque<Vector3> trail;
     };
     

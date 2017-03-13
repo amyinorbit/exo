@@ -13,6 +13,7 @@
 #include <SDL2/SDL.h>
 #include "Math/matrix.hpp"
 #include "Math/vec3.hpp"
+#include "Model.hpp"
 
 class Renderer {
 public:
@@ -26,11 +27,12 @@ public:
         PASTEL_BLUE,
         PURPLE,
         PINK,
-        YELLOW,
+        PASTEL_YELLOW,
         KAKI,
         PASTEL_GREEN,
         TURQUOISE,
         LIGHTBLUE,
+        YELLOW,
         RED,
         GREEN,
         BLUE,
@@ -80,6 +82,8 @@ public:
     void drawString(Vector3 start, const std::string& text);
     
     void drawUIString(const Vector3& start, const std::string& text);
+    
+    void drawModel(const Model& model, const Vector3& start, double scale);
     
     double deltaTime();
     

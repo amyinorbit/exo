@@ -22,6 +22,7 @@ static const SDL_Color colors[] {
     SDL_Color{0,   124, 53,  255},  // GREEN
     SDL_Color{0,   176, 156, 255},  // TURQUOISE
     SDL_Color{83,  208, 241, 255},  // LIGHTBLUE
+    SDL_Color{255, 255, 0,   255},  // YELLOW
     SDL_Color{255, 0,   0,   255},  // RED
     SDL_Color{0,   255, 0,   255},  // GREEN
     SDL_Color{0,   0,   255, 255},  // BLUE
@@ -35,11 +36,12 @@ const std::unordered_map<std::string, Renderer::Color> Renderer::colorNames = {
     {"PASTEL_BLUE", Color::PASTEL_BLUE},
     {"PURPLE", Color::PURPLE},
     {"PINK", Color::PINK},
-    {"YELLOW", Color::YELLOW},
+    {"PASTEL_YELLOW", Color::PASTEL_YELLOW},
     {"KAKI", Color::KAKI},
     {"PASTEL_GREEN", Color::PASTEL_GREEN},
     {"TURQUOISE", Color::TURQUOISE},
     {"LIGHTBLUE", Color::LIGHTBLUE},
+    {"YELLOW", Color::YELLOW},
     {"RED", Color::RED},
     {"GREEN", Color::GREEN},
     {"BLUE", Color::BLUE},
@@ -169,9 +171,8 @@ void Renderer::setColor(Color index, double alpha) {
 }
 
 void Renderer::drawPoint(Vector3 point) {
-    auto p = Transform::apply(transform(), point);
-    if(p.z < 0) { return; }
-    SDL_RenderDrawPoint(renderer_, p.x, p.y);
+    if(!t(point)) { return; }
+    SDL_RenderDrawPoint(renderer_, point.x, point.y);
 }
 
 void Renderer::drawLine(Vector3 start, Vector3 end) {
@@ -193,6 +194,24 @@ void Renderer::drawString(Vector3 start, const std::string& text) {
 void Renderer::drawUIString(const Vector3& start, const std::string& text) {
     auto s = Transform::apply(view_, start);
     stringRGBA(renderer_, s.x, s.y, text.c_str(), color_.r, color_.g, color_.b, color_.a);
+}
+
+
+void Renderer::drawModel(const Model& model, const Vector3& start, double scale) {
+    std::vector<Vector3> vertices;
+    for(auto& v : model.vertices) {
+        vertices.push_back(start + scale*v);
+    }
+    for(auto& face : model.faces) {
+        //drawPoint(vertices[face.a]);
+        //drawPoint(vertices[face.b]);
+        //drawPoint(vertices[face.c]);
+        //drawPoint(vertices[face.d]);
+        //drawLine(vertices[face.a], vertices[face.b]);
+        drawLine(vertices[face.b], vertices[face.c]);
+        drawLine(vertices[face.c], vertices[face.d]);
+        drawLine(vertices[face.d], vertices[face.a]);
+    }
 }
 
 double Renderer::deltaTime() {

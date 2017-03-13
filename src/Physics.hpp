@@ -13,7 +13,9 @@
 namespace Physics {
     
     const long double Msol = 1.98855e30;
+    const long double Rsol = 6.95700e8;
     const long double Mearth = 5.9722e24;
+    const long double Rearth = 6.371e6;
     const long double AU = 149597870700;
     const long double G = 6.674e-11;
     
