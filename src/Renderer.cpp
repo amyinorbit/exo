@@ -47,7 +47,7 @@ const std::unordered_map<std::string, Renderer::Color> Renderer::colorNames = {
     {"BLUE", Color::BLUE},
 };
 
-Renderer::Renderer(uint32_t width, uint32_t height, const std::string& name)
+Renderer::Renderer(uint32_t width, uint32_t height, const std::string& name, bool fullscreen)
 : rx_(0)
 , ry_(0)
 , rz_(0)
@@ -67,10 +67,16 @@ Renderer::Renderer(uint32_t width, uint32_t height, const std::string& name)
         throw "error initialising graphics library";
     }
     
+    uint32_t flags = SDL_WINDOW_ALLOW_HIGHDPI;
+    if(fullscreen) {
+        flags |= SDL_WINDOW_FULLSCREEN;
+    } else {
+        flags |= SDL_WINDOW_SHOWN;
+    }
+    
     window_ = SDL_CreateWindow(("exo - simulating '" + name + "'").c_str(),
                                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                               width_, height_,
-                               SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN);
+                               width_, height_, flags);
     if(!window_) {
         throw "error creating display window";
     }

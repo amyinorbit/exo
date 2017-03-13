@@ -41,7 +41,7 @@ install: $(TARGET)
 	
 %.json: systems/%.json $(TARGET)
 	@echo "[running $(TARGET)]"
-	@$(PRODUCT_DIR)/$(TARGET) systems/$@ 60
+	@$(PRODUCT_DIR)/$(TARGET) -s 60 -w 600 -h 480 systems/$@
 
 # Build the PAL compiler
 $(TARGET): $(PRODUCT_DIR) $(OBJECTS_DIR) $(OBJECTS)

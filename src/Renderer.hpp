@@ -49,7 +49,7 @@ public:
     
     // MARK: = Renderer Implementation
     
-    Renderer(uint32_t width, uint32_t height, const std::string& name);
+    Renderer(uint32_t width, uint32_t height, const std::string& name, bool fullscreen = false);
     
     virtual ~Renderer();
     
