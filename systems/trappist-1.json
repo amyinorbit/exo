@@ -1,0 +1,72 @@
+{
+    "star": {
+        "name": "TRAPPIST-1a",
+        "radius": 0.114,
+        "mass": 0.08
+    },
+    "bodies": [
+        {
+            "name": "TRAPPIST-1b",
+            "radius": 1.086,
+            "sma": 0.01111,
+            "ecc": 0.081,
+            "mass": 1.85,
+            "inc": 0.35,
+            "color": "PURPLE"
+        },
+        {
+            "name": "TRAPPIST-1c",
+            "radius": 1.056,
+            "sma": 0.01521,
+            "ecc": 0.083,
+            "mass": 1.38,
+            "inc": 0.33,
+            "color": "PINK"
+        },
+        {
+            "name": "TRAPPIST-1d",
+            "radius": 0.772,
+            "sma": 0.02144,
+            "ecc": 0.070,
+            "mass": 0.41,
+            "inc": 0.25,
+            "color": "PASTEL_YELLOW"
+        },
+        {
+            "name": "TRAPPIST-1e",
+            "radius": 0.918,
+            "sma": 0.02817,
+            "ecc": 0.085,
+            "mass": 0.62,
+            "inc": 0.24,
+            "color": "KAKI"
+        },
+        {
+            "name": "TRAPPIST-1f",
+            "radius": 1.045,
+            "sma": 0.03710,
+            "ecc": 0.063,
+            "mass": 0.68,
+            "inc": 0.24,
+            "color": "PASTEL_GREEN"
+        },
+        {
+            "name": "TRAPPIST-1g",
+            "radius": 1.127,
+            "sma": 0.04510,
+            "ecc": 0.061,
+            "mass": 1.34,
+            "inc": 0.29,
+            "color": "TURQUOISE"
+        },
+        {
+            "name": "TRAPPIST-1h",
+            "radius": 1.755,
+            "sma": 0.06300,
+            "ecc": 0.0,
+            "mass": 1.0,
+            "inc": 0.20,
+            "color": "LIGHTBLUE"
+        }
+    ]
+}

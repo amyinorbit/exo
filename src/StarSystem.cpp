@@ -191,8 +191,8 @@ void StarSystem::render(Renderer &renderer) {
     for(auto& body: bodies_) {
         renderer.setColor(body.color);
 
-        renderer.drawModel(Model::sphereInstance(), body.state.position, body.radius);
-        renderer.drawString(body.state.position + Vector3{0, 0, body.radius}, body.name);
+        renderer.drawModel(Model::sphereInstance(), body.state.position, 10*body.radius);
+        renderer.drawString(body.state.position + Vector3{0, 0, 10*body.radius}, body.name);
         Vector3 previous = body.state.position;
         
         int it = TRAIL_SIZE-1;
