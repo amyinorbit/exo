@@ -39,9 +39,9 @@ install: $(TARGET)
 	@echo "[installing product $(TARGET)]"
 	@cp $(PRODUCT_DIR)/$(TARGET) $(INSTALL_DIR)/$(TARGET)
 	
-run: $(TARGET)
+%.json: systems/%.json $(TARGET)
 	@echo "[running $(TARGET)]"
-	@$(PRODUCT_DIR)/$(TARGET) sol.json 3600
+	@$(PRODUCT_DIR)/$(TARGET) systems/$@ 60
 
 # Build the PAL compiler
 $(TARGET): $(PRODUCT_DIR) $(OBJECTS_DIR) $(OBJECTS)
