@@ -24,16 +24,14 @@ static int iterations = 0;
 std::string dateString(time_t seconds) {
     long double jd = Physics::julianFromUnix(seconds);
     std::tm *ltm = std::localtime(&seconds);
-    
     char niceDate[256];
-    
     std::strftime(niceDate, 256, "ET: %b %d, %Y", ltm);
-    
     return "JD: " + std::to_string((uint64_t)jd) + ", " + niceDate;
 }
 
 void printUsage(const char* calledName) {
     std::cerr << "usage: " << calledName << " [-w width] [-h height] [-f] [-s step] json_file " << std::endl;
+    std::cerr << std::endl;
     std::cerr << "\t-w,--width:\twindow width (defaults to 800 pixels)" << std::endl;
     std::cerr << "\t-h,--height:\twindow height (defaults to 600 pixels)" << std::endl;
     std::cerr << "\t-s,--step:\ttime increment between integration steps (defaults to 60 seconds)" << std::endl;
@@ -99,7 +97,7 @@ int main(int argc, char** args) {
         {"width",       required_argument,  nullptr,        'w'},
         {"height",      required_argument,  nullptr,        'h'},
         {"step",    required_argument,  nullptr,            's'},
-        {"fullscreen",  no_argument,        &fullscreen,    1},
+        {"fullscreen",  no_argument,        &fullscreen,     1 },
         {NULL, 0, NULL, 0}
     };
     

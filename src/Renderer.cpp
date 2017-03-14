@@ -69,7 +69,13 @@ Renderer::Renderer(uint32_t width, uint32_t height, const std::string& name, boo
     
     uint32_t flags = SDL_WINDOW_ALLOW_HIGHDPI;
     if(fullscreen) {
+        SDL_DisplayMode current;
         flags |= SDL_WINDOW_FULLSCREEN;
+        if(SDL_GetCurrentDisplayMode(0, &current) < 0) {
+            throw "error fetching screen size";
+        }
+        width_ = current.w;
+        height_ = current.h;
     } else {
         flags |= SDL_WINDOW_SHOWN;
     }
