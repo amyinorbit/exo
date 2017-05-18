@@ -2,3 +2,5 @@
 build
 *.o
 *.exe
+*tests*
+*.pdf
