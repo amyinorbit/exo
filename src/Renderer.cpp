@@ -3,7 +3,7 @@
 //  trappist
 //
 //  Created by Amy Parent on 06/03/2017.
-//  Copyright © 2017 cesarparent. All rights reserved.
+//  Copyright © 2017 Amy Parent. All rights reserved.
 //
 #include <cmath>
 #include <SDL2/SDL2_gfxPrimitives.h>
