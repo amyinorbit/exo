@@ -2,7 +2,7 @@
 // HADS
 // Utils.hpp - bunch of maths helper functions
 //
-// authors:     Cesar Parent <cesar@cesarparent.com>
+// authors:     Amy Parent <amy@amyparent.com>
 //
 #pragma once
 

@@ -2,8 +2,8 @@
 //  Vector3.hpp
 //  engine3
 //
-//  Created by Cesar Parent on 29/03/2016.
-//  Copyright © 2016 cesarparent. All rights reserved.
+//  Created by Amy Parent <amy@amyparent.com> on 29/03/2016.
+//  Copyright © 2016 Amy Parent. All rights reserved.
 //
 
 #pragma once

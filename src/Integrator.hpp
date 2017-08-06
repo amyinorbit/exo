@@ -2,7 +2,7 @@
 // HADS
 // Integrator.hpp - Physics integrator interface.
 //
-// authors:     Cesar Parent <cesar@cesarparent.com>
+// authors:     Amy Parent <amy@amyparent.com>
 //
 #pragma once
 #include <functional>

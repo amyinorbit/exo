@@ -6,7 +6,7 @@
 // being. Ideally, it will be swapped for the Runge-Kutta 4 method, but there
 // shouldn't be that bgi a difference in precision for our application.
 //
-// authors:     Cesar Parent <cesar@cesarparent.com>
+// authors:     Amy Parent <amy@amyparent.com>
 //
 #include "Integrator.hpp"
 
