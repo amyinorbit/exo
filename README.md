@@ -78,5 +78,6 @@ usage: exo [-w width] [-h height] [-f] [-s step] json_file
 | `1-0`         | Sets the number of iterations per frame (10-100)      |
 | `↑`           | Doubles the number of iterations per frame            |
 | `↓`           | Halves the number of iterations per frame             |
+| `space`       | Pauses the simulation (0 iterations per frame)        |
 | `mouse wheel` | Zooms in and out                                      |
 | `mouse drag`  | Rotates the view                                      |
