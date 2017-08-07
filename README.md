@@ -4,7 +4,7 @@ Exo is a simple n-body orbit integrator written as a proof-of-concept. It uses v
 is neither optimised nor really accurate, but it works on a basic level. Visualisation is done using
 SDL for basic 2D drawing, and a custom software 3D renderer. Exo is released under MIT license.
 
-![exo simulating TRAPPIST-1](screen-trappist1.png)
+![exo simulating TRAPPIST-1](screen-trappist1.png)w
 
 ## Installing Exo
 
@@ -71,3 +71,12 @@ usage: exo [-w width] [-h height] [-f] [-s step] json_file
 	json_file:	json solar system file
 ````
 
+**shortcuts**
+
+| key           | action                                                |
+|:--------------|:------------------------------------------------------|
+| `1-0`         | Sets the number of iterations per frame (10-100)      |
+| `↑`           | Doubles the number of iterations per frame            |
+| `↓`           | Halves the number of iterations per frame             |
+| `mouse wheel` | Zooms in and out                                      |
+| `mouse drag`  | Rotates the view                                      |
