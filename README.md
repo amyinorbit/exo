@@ -4,6 +4,8 @@ Exo is a simple n-body orbit integrator written as a proof-of-concept. It uses v
 is neither optimised nor really accurate, but it works on a basic level. Visualisation is done using
 SDL for basic 2D drawing, and a custom software 3D renderer. Exo is released under MIT license.
 
+![exo simulating TRAPPIST-1](screen-trappist1.png)
+
 ## Installing Exo
 
 Exo requires a modern C++ compiler (tested with Clang), make, SDL2 and SDL2_gfx for rendering.
