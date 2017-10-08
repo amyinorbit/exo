@@ -15,11 +15,9 @@ Exo requires a modern C++ compiler (tested with Clang), make, SDL2 and SDL2_gfx 
 
 $ brew install sdl2 sdl2_gfx                # macOS/Homebrew
 $ sudo apt-get intsall sdl2-devel sdl2_gfx  # GNU/Linux/ish
-````
 
 # Build exo
 
-````bash
 $ git clone git@github.com:amyinorbit/exo.git
 $ cd exo
 $ make install -j4
