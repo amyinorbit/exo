@@ -35,6 +35,7 @@ void printUsage(const char* calledName) {
     std::cerr << "\t-w,--width:\twindow width (defaults to 800 pixels)" << std::endl;
     std::cerr << "\t-h,--height:\twindow height (defaults to 600 pixels)" << std::endl;
     std::cerr << "\t-s,--step:\ttime increment between integration steps (defaults to 60 seconds)" << std::endl;
+    std::cerr << "\t-j,--start:\tJulian Date of the simulation's start (defaults to now" << std::endl;
     std::cerr << "\tjson_file:\tjson solar system file" << std::endl;
 }
 
@@ -90,19 +91,21 @@ int main(int argc, char** args) {
     uint32_t        width           = 800;
     uint32_t        height          = 600;
     double          timestep        = 60.0;
+    long double     startDate       = Physics::julianFromUnix(time(nullptr));
     const char*     jsonpath        = nullptr;
     
     static struct option options[] =
     {
         {"width",       required_argument,  nullptr,        'w'},
         {"height",      required_argument,  nullptr,        'h'},
-        {"step",    required_argument,  nullptr,            's'},
+        {"step",        required_argument,  nullptr,        's'},
+        {"-start",      required_argument,  nullptr,        'j'},
         {"fullscreen",  no_argument,        &fullscreen,     1 },
         {NULL, 0, NULL, 0}
     };
     
     int c = -1;
-    while((c = getopt_long(argc, args, "w:h:s:f", options, NULL)) != -1) {
+    while((c = getopt_long(argc, args, "w:h:s:j:f", options, NULL)) != -1) {
         switch(c) {
             case 'w':
                 width = std::atoi(optarg);
@@ -115,6 +118,9 @@ int main(int argc, char** args) {
                 break;
             case 'f':
                 fullscreen = 1;
+                break;
+            case 'j':
+                startDate = std::atof(optarg);
                 break;
             case '?':
                 printUsage(args[0]);
@@ -138,8 +144,8 @@ int main(int argc, char** args) {
         std::exit(EXIT_FAILURE);
     }
     
-    time_t seconds = time(nullptr)/* - (300.0 * 3600 * 24)*/;
-    StarSystem system{in, Physics::julianFromUnix(seconds)};
+    time_t seconds = Physics::unixFromJulian(startDate)/* - (300.0 * 3600 * 24)*/;
+    StarSystem system{in, startDate};
     in.close();
     
     Renderer renderer{width, height, jsonpath, static_cast<bool>(fullscreen)};
