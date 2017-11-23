@@ -29,8 +29,8 @@ namespace Physics {
         return (jd - 2440587.5) * 86400.0;
     }
     
-    static inline long double julianFromUnix(uint64_t unix) {
-        return (unix / 86400.0) + 2440587.5;
+    static inline long double julianFromUnix(uint64_t t) {
+        return (t / 86400.0) + 2440587.5;
     }
     
     long double gravity(const Vector3& body1, long double mass1,
