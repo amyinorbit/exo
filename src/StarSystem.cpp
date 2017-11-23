@@ -82,11 +82,13 @@ StarSystem::StarSystem(std::istream& jsonFile, long double julianDate) {
             .meanAnomaly(get(body, "ma", 0.0))
             .epoch(get(body, "epoch", Physics::J2000))
             .build();
+        //std::cout << orbit << std::endl;
         
         // First estimation, we only use that to get the position - velocity
         // will not be accurate until we have a complete system mass and
         // barycenter location.
         auto stateVectors = orbit.stateVectors((bodies_[0].mass + mass) * Physics::G, julianDate);
+        //std::cout << "\t-> " << stateVectors.first << ", " << stateVectors.second << std::endl;
         
         Integrator::State state {
             stateVectors.first,
@@ -142,11 +144,13 @@ double StarSystem::maxDiameter() {
     
     for(auto& body : bodies_) {
         auto sma = body.state.position.magnitude();
+        if(sma <= 0) { continue; }
         if(sma > radius) {
             radius = sma;
         }
     }
     return radius * 2;
+    //return bodies_[0].state.position.magnitude() * 2;
 }
 
 Vector3 StarSystem::accelerate(const Integrator::State& state, double mass) {

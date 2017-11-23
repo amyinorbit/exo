@@ -138,7 +138,7 @@ int main(int argc, char** args) {
         std::exit(EXIT_FAILURE);
     }
     
-    time_t seconds = time(nullptr);
+    time_t seconds = time(nullptr)/* - (300.0 * 3600 * 24)*/;
     StarSystem system{in, Physics::julianFromUnix(seconds)};
     in.close();
     

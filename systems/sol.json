@@ -6,6 +6,20 @@
     },
     "bodies": [
         {
+            "epoch": 2458057.5,
+            "name": "1I/'Oumuamua",
+            "mass": 0.0001,
+            "sma": -1.2799,
+            "ecc": 1.19949,
+            "inc": 122.69,
+            "raan": 24.599,
+            "arg": 241.70,
+            "ma": 35.060,
+            "radius": 1e-6,
+            "color": "PURPLE"
+            
+        },
+        {
             "name": "Mercury",
             "mass": 0.055,
             "sma": 0.38709893,
