@@ -101,6 +101,8 @@ StarSystem::StarSystem(std::istream& jsonFile, long double julianDate) {
             mass,
             get(body, "radius", 1.0) * Physics::Rearth
         });
+        // const auto& B = bodies_.back();
+        // std::cout << "Found " << B.name << " with radius: " << B.radius / Physics::Rearth << std::endl;
         orbits_.push_back(orbit);
     }
     
@@ -190,8 +192,8 @@ double StarSystem::advance(int iterations, double delta) {
 void StarSystem::render(Renderer &renderer) {
     for(auto& body: bodies_) {
         renderer.setColor(body.color);
-
-        renderer.drawModel(Model::sphereInstance(), body.state.position, 10*body.radius);
+        //renderer.drawModel(Model::sphereInstance(), body.state.position, 10*body.radius);
+        renderer.drawCircle(body.state.position, 4);
         renderer.drawString(body.state.position + Vector3{0, 0, 10*body.radius}, body.name);
         Vector3 previous = body.state.position;
         
