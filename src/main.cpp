@@ -78,8 +78,10 @@ void onMouseDrag(Renderer& r, double dx, double dy) {
     r.rotate(-300*dy, 0, 300*dx);
 }
 
+static float scrollSpeed = 0.f;
+
 void onMouseScroll(Renderer& r, double dx, double dy) {
-    r.zoom(-5*dy);
+    scrollSpeed = - 6.f*dy;
 }
 
 // Mark: - Program entry point. Should porbably move to an App class
@@ -144,7 +146,7 @@ int main(int argc, char** args) {
         std::exit(EXIT_FAILURE);
     }
     
-    time_t seconds = Physics::unixFromJulian(startDate)/* - (300.0 * 3600 * 24)*/;
+    time_t seconds = Physics::unixFromJulian(startDate);
     StarSystem system{in, startDate};
     in.close();
     
@@ -156,6 +158,11 @@ int main(int argc, char** args) {
     
     renderer.setScale(100.0 / system.maxDiameter());
     renderer.start([&](Renderer& renderer) {
+        
+        
+        renderer.zoom(scrollSpeed);
+        scrollSpeed *= 0.90f;
+        if(scrollSpeed > -0.0001f && scrollSpeed < 0.0001f) { scrollSpeed = 0.f; }
         
         seconds += system.advance(iterations, timestep);
         system.render(renderer);
