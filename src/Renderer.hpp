@@ -59,10 +59,16 @@ public:
     
     void setScale(double scale);
     
+    bool setCenter(const Vector3* c) {
+        if(centerT_ < 1.f) { return false; }
+        nextCenter_ = c;
+        centerT_ = 0.f;
+        return true;
+    }
+    
     Mat44& transform() {
         if(transformDirty_) {
             updateTransform();
-            transformDirty_ = false;
         }
         return transform_;
     }
@@ -83,19 +89,30 @@ public:
     
     void drawUIString(const Vector3& start, const std::string& text);
     
+    void drawUIBox(Vector3 topLeft, Vector3 size, Color background, Color border);
+    
     void drawModel(const Model& model, const Vector3& start, double scale);
     
     double deltaTime();
     
     void start(Tick updateFn);
     
+    uint32_t width() const { return width_; }
+    uint32_t height() const { return height_; }
+    
 private:
+    
+    void updateCenterTransition(double deltaT);
     
     void updateTransform();
     
     bool t(Vector3& v);
     
     // TRANSFORM STUFF FOR FAKE-Y 3D
+    Vector3         center_;
+    const Vector3*  nextCenter_;
+    const Vector3*  prevCenter_;
+    float           centerT_;
     double          rx_, ry_, rz_;
     double          scale_;
     double          zoom_;

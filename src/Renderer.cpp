@@ -48,7 +48,11 @@ const std::unordered_map<std::string, Renderer::Color> Renderer::colorNames = {
 };
 
 Renderer::Renderer(uint32_t width, uint32_t height, const std::string& name, bool fullscreen)
-: rx_(0)
+: center_(0, 0, 0)
+, nextCenter_(NULL)
+, prevCenter_(NULL)
+, centerT_(1.f)
+, rx_(0)
 , ry_(0)
 , rz_(0)
 , scale_(1.0)
@@ -126,14 +130,17 @@ void Renderer::rotate(double rx, double ry, double rz) {
 }
 
 void Renderer::updateTransform() {
+    
     transform_ = // Our view matrix is basic. The camera is at 0, 0, zoom_*height
+                //Transform::translate(0, 0, -100) *
                  Transform::translate(0, 0, -(1.0 + 10.0*(zoom_*zoom_*zoom_))) *
-                 
                  // This is basically the model matrix
-                 Transform::scale(scale_) *
                  Transform::rotateX(rx_) *
                  Transform::rotateY(ry_) *
-                 Transform::rotateZ(rz_);
+                 Transform::rotateZ(rz_) *
+                 Transform::scale(scale_) *
+                 Transform::translate(-center_.x, -center_.y, -center_.z);
+                 
     transformDirty_ = false;
 }
 
@@ -209,6 +216,24 @@ void Renderer::drawUIString(const Vector3& start, const std::string& text) {
 }
 
 
+void Renderer::drawUIBox(Vector3 topLeft, Vector3 size, Color background, Color border) {
+    auto oldColor = color_;
+    
+    const auto scaler = Vector3{float(width_), float(height_), 0.0};
+    topLeft = Transform::apply(view_, topLeft);
+    size *= scaler;
+    
+    SDL_Rect box = {int(topLeft.x), int(topLeft.y), int(size.x), int(size.y)};
+    
+    setColor(background);
+    SDL_RenderFillRect(renderer_, &box);
+    setColor(border);
+    SDL_RenderDrawRect(renderer_, &box);
+    
+    color_ = oldColor;
+}
+
+
 void Renderer::drawModel(const Model& model, const Vector3& start, double scale) {
     std::vector<Vector3> vertices;
     for(auto& v : model.vertices) {
@@ -228,6 +253,31 @@ void Renderer::drawModel(const Model& model, const Vector3& start, double scale)
 
 double Renderer::deltaTime() {
     return static_cast<double>(SDL_GetTicks() - lastFrame_) / 1000.0;
+}
+
+#define EASE_INOUT(t) (-0.5f*(std::cos((t) * M_PI)-1))
+
+void Renderer::updateCenterTransition(double deltaT) {
+    if(nextCenter_ == NULL) {
+        if(prevCenter_) {
+            center_ = *prevCenter_;
+            transformDirty_ = true;
+        }
+        return;
+    }
+    if(centerT_ >= 1.f) { return; }
+    
+    Vector3 A = prevCenter_ ? *prevCenter_ : Vector3{0, 0, 0};
+    
+    centerT_ += deltaT;
+    center_ = lerp(A, *nextCenter_, EASE_INOUT(centerT_));
+    transformDirty_ = true;
+    
+    if(centerT_ >= 1.f) {
+        centerT_ = 1.f;
+        prevCenter_ = nextCenter_;
+        nextCenter_ = NULL;
+    }
 }
 
 void Renderer::start(Tick updateFn) {
@@ -266,6 +316,7 @@ void Renderer::start(Tick updateFn) {
             interval = 16;
         }
         
+        
         setColor(Color::DARKGREY);
         SDL_RenderClear(renderer_);
         
@@ -282,6 +333,7 @@ void Renderer::start(Tick updateFn) {
         drawLine(Vector3{0, 0, 0}, Vector3{0, 0, .1/scale_});
         
         SDL_RenderPresent(renderer_);
+        updateCenterTransition(float(interval) / 1000.f);
         lastFrame_ = SDL_GetTicks();
     }
 }

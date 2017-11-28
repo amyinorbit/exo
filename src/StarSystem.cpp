@@ -29,6 +29,7 @@ T get(const json& data, const std::string& key, T fallback) {
 
 StarSystem::StarSystem(std::istream& jsonFile, long double julianDate) {
     
+    nextBody_ = 1;
     ticksToTrail_ = 0;
     json data;
     jsonFile >> data;
@@ -137,6 +138,14 @@ StarSystem::StarSystem(std::istream& jsonFile, long double julianDate) {
         body.state.position -= barycenter;
         body.state.velocity -= momentum;
     }
+}
+
+
+const StarSystem::Body* StarSystem::nextBody() const {
+    if(bodies_.size() <= 0) { return NULL; }
+    const Body* b = &bodies_[nextBody_];
+    nextBody_ = (nextBody_ + 1) % bodies_.size();
+    return b;
 }
 
 double StarSystem::maxDiameter() {

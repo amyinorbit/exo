@@ -38,13 +38,17 @@ public:
     
     void render(Renderer& renderer);
     
-private:
+    const Body* nextBody() const;
     
+    const std::vector<Body>& bodies() const { return bodies_; }
+    
+private:
     Vector3 accelerate(const Integrator::State& state, double mass);
     
     std::string         integrating_;
     int                 ticksToTrail_;
     
+    mutable uint64_t    nextBody_;
     std::vector<Body>   bodies_;
     std::vector<Body>   previous_;
     

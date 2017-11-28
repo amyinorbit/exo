@@ -13,6 +13,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <clocale>
+#include <algorithm>
+#include <iterator>
 #include <getopt.h>
 #include "Math/Utils.hpp"
 #include "Physics.hpp"
@@ -38,6 +40,9 @@ void printUsage(const char* calledName) {
     std::cerr << "\t-j,--start:\tJulian Date of the simulation's start (defaults to now" << std::endl;
     std::cerr << "\tjson_file:\tjson solar system file" << std::endl;
 }
+
+static bool nextBody = true;
+static bool showNames = false;
 
 void onKeyDown(Renderer& r, SDL_Scancode key) {
     switch(key) {
@@ -69,6 +74,12 @@ void onKeyDown(Renderer& r, SDL_Scancode key) {
         case SDL_SCANCODE_0:
             iterations = 10 * (1 + key - SDL_SCANCODE_1);
             break;
+        case SDL_SCANCODE_RIGHTBRACKET:
+            nextBody = true;
+            break;
+        case SDL_SCANCODE_TAB:
+            showNames = !showNames;
+            break;
         default:
             break;
     }
@@ -86,6 +97,7 @@ void onMouseScroll(Renderer& r, double dx, double dy) {
 
 // Mark: - Program entry point. Should porbably move to an App class
 
+
 int main(int argc, char** args) {
 
     std::setlocale(LC_ALL, "");
@@ -101,7 +113,7 @@ int main(int argc, char** args) {
         {"width",       required_argument,  nullptr,        'w'},
         {"height",      required_argument,  nullptr,        'h'},
         {"step",        required_argument,  nullptr,        's'},
-        {"-start",      required_argument,  nullptr,        'j'},
+        {"start",       required_argument,  nullptr,        'j'},
         {"fullscreen",  no_argument,        &fullscreen,     1 },
         {NULL, 0, NULL, 0}
     };
@@ -156,19 +168,65 @@ int main(int argc, char** args) {
     renderer.onMouseScroll = &onMouseScroll;
     renderer.onKeyDown = &onKeyDown;
     
+    uint64_t bodyID = 0;
+    std::string bodyName = "";
+    
+    std::vector<std::string> names;
+    
+    std::transform(system.bodies().begin(),
+                   system.bodies().end(),
+                   std::back_inserter(names),
+                   [](const StarSystem::Body& b){
+        return b.name;
+    });
+    
     renderer.setScale(100.0 / system.maxDiameter());
     renderer.start([&](Renderer& renderer) {
         
+        if(nextBody) {
+            nextBody = false;
+            if(bodyID < system.bodies().size()) {
+                if(renderer.setCenter(&(system.bodies()[bodyID].state.position))) {
+                    bodyName = system.bodies()[bodyID].name;
+                    bodyID = (bodyID + 1) % system.bodies().size();
+                }
+            } 
+        }
         
         renderer.zoom(scrollSpeed);
         scrollSpeed *= 0.90f;
         if(scrollSpeed > -0.0001f && scrollSpeed < 0.0001f) { scrollSpeed = 0.f; }
         
-        seconds += system.advance(iterations, timestep);
+        if(!showNames) {
+            seconds += system.advance(iterations, timestep);
+        }
+        
         system.render(renderer);
+        
+        if(showNames) {
+            double deltaY = 0.03 * (600.0 / double(renderer.height()));
+            double deltaX = 0.02 * (800.0 / double(renderer.width()));
+            double height = deltaY * float(names.size() + 2);
+            double width = deltaX * 10;
+            double startX = -0.48 + deltaX;
+            double startY = -((0.03 * float(names.size()))/2.0);
+            double boxY = -(deltaY) + startY;
+            
+            renderer.drawUIBox(Vector3{-0.48, boxY, 0}, Vector3{width, height, 0}, Renderer::Color::BLACK, Renderer::Color::WHITE);
+            
+            for(size_t i = 0; i < names.size(); ++i) {
+                const auto& name = names[i];
+                renderer.setColor(i == (bodyID-1)%names.size() ?
+                    Renderer::Color::PASTEL_YELLOW :
+                    Renderer::Color::WHITE);
+                renderer.drawUIString(Vector3{startX, startY + (deltaY * float(i)), 0}, name);
+            }
+        }
+        
         renderer.setColor(Renderer::Color::WHITE);
-        renderer.drawUIString(Vector3{-0.47, 0.47, 0}, dateString(seconds));
+        renderer.drawUIString(Vector3{-0.47, 0.47, 0}, dateString(seconds) +  " [@"+bodyName+"]");
         renderer.drawUIString(Vector3{-0.47, -0.47, 0}, std::to_string(iterations) + " steps/frame");
+        
         
         return true;
     });

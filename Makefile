@@ -3,8 +3,8 @@ SUFFIX		:=
 PLATFORM	:= macOS
 
 # Compiler flags. Optmised for debugging, not speed
-CPPFLAGS	:= -Wall -O3 -std=gnu++11 -Wno-unknown-pragmas
-LDFLAGS		:=  -lSDL2_gfx -lSDL2
+CPPFLAGS	:= -O3 -std=gnu++11 -Wno-unknown-pragmas
+LDFLAGS		:= -O3 -lSDL2_gfx -lSDL2
 
 ifeq ($(PLATFORM), win32)
     CXX         := $(WIN32_HOME)/usr/bin/i686-w64-mingw32.shared-g++
@@ -41,7 +41,7 @@ install: $(TARGET)
 	
 %.json: systems/%.json $(TARGET)
 	@echo "[running $(TARGET)]"
-	@$(PRODUCT_DIR)/$(TARGET) -s 60 -w 600 -h 480 systems/$@
+	@$(PRODUCT_DIR)/$(TARGET) -s 1000 -w 600 -h 480 systems/$@
 
 # Build the PAL compiler
 $(TARGET): $(PRODUCT_DIR) $(OBJECTS_DIR) $(OBJECTS)
