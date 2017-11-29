@@ -132,7 +132,6 @@ void Renderer::rotate(double rx, double ry, double rz) {
 void Renderer::updateTransform() {
     
     transform_ = // Our view matrix is basic. The camera is at 0, 0, zoom_*height
-                //Transform::translate(0, 0, -100) *
                  Transform::translate(0, 0, -(1.0 + 10.0*(zoom_*zoom_*zoom_))) *
                  // This is basically the model matrix
                  Transform::rotateX(rx_) *

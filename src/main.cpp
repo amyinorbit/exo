@@ -41,8 +41,9 @@ void printUsage(const char* calledName) {
     std::cerr << "\tjson_file:\tjson solar system file" << std::endl;
 }
 
-static bool nextBody = true;
+static int bodySwitcher = 1;
 static bool showNames = false;
+static float mult = 1;
 
 void onKeyDown(Renderer& r, SDL_Scancode key) {
     switch(key) {
@@ -74,8 +75,17 @@ void onKeyDown(Renderer& r, SDL_Scancode key) {
         case SDL_SCANCODE_0:
             iterations = 10 * (1 + key - SDL_SCANCODE_1);
             break;
+        case SDL_SCANCODE_EQUALS:
+            mult = 1;
+            break;
+        case SDL_SCANCODE_MINUS:
+            mult = -1;
+            break;
         case SDL_SCANCODE_RIGHTBRACKET:
-            nextBody = true;
+            bodySwitcher = 1;
+            break;
+        case SDL_SCANCODE_LEFTBRACKET:
+            bodySwitcher = -1;
             break;
         case SDL_SCANCODE_TAB:
             showNames = !showNames;
@@ -93,6 +103,35 @@ static float scrollSpeed = 0.f;
 
 void onMouseScroll(Renderer& r, double dx, double dy) {
     scrollSpeed = - 6.f*dy;
+}
+
+void drawBodiyList(Renderer& renderer, const std::vector<std::string>& names, uint64_t selected) {
+    double deltaY = 0.03 * (600.0 / double(renderer.height()));
+    double deltaX = 0.02 * (800.0 / double(renderer.width()));
+    double height = deltaY * float(names.size() + 2);
+    double width = deltaX * 10;
+    double startX = -0.48 + deltaX;
+    double startY = -((0.03 * float(names.size()))/2.0);
+    double boxY = -(deltaY) + startY;
+    
+    renderer.drawUIBox(Vector3{-0.48, boxY, 0}, Vector3{width, height, 0}, Renderer::Color::BLACK, Renderer::Color::WHITE);
+    
+    for(size_t i = 0; i < names.size(); ++i) {
+        const auto& name = names[i];
+        renderer.setColor(i == selected ? Renderer::Color::PASTEL_YELLOW : Renderer::Color::WHITE);
+        renderer.drawUIString(Vector3{startX, startY + (deltaY * float(i)), 0}, name);
+    }
+}
+
+uint64_t changeBody(const StarSystem& system, Renderer& renderer, uint64_t current, int offset) {
+    const auto& bodies = system.bodies();
+    if(bodies.size() == 0) { return -1; }
+    
+    int64_t target = (current + offset) % bodies.size();
+    if(renderer.setCenter(&(bodies[target].state.position))) {
+        return target;
+    }
+    return current;
 }
 
 // Mark: - Program entry point. Should porbably move to an App class
@@ -168,11 +207,8 @@ int main(int argc, char** args) {
     renderer.onMouseScroll = &onMouseScroll;
     renderer.onKeyDown = &onKeyDown;
     
-    uint64_t bodyID = 0;
-    std::string bodyName = "";
-    
+    int64_t bodyID = -1;
     std::vector<std::string> names;
-    
     std::transform(system.bodies().begin(),
                    system.bodies().end(),
                    std::back_inserter(names),
@@ -183,14 +219,9 @@ int main(int argc, char** args) {
     renderer.setScale(100.0 / system.maxDiameter());
     renderer.start([&](Renderer& renderer) {
         
-        if(nextBody) {
-            nextBody = false;
-            if(bodyID < system.bodies().size()) {
-                if(renderer.setCenter(&(system.bodies()[bodyID].state.position))) {
-                    bodyName = system.bodies()[bodyID].name;
-                    bodyID = (bodyID + 1) % system.bodies().size();
-                }
-            } 
+        if(bodySwitcher != 0) {
+            bodyID = changeBody(system, renderer, bodyID, bodySwitcher);
+            bodySwitcher = 0;
         }
         
         renderer.zoom(scrollSpeed);
@@ -198,36 +229,18 @@ int main(int argc, char** args) {
         if(scrollSpeed > -0.0001f && scrollSpeed < 0.0001f) { scrollSpeed = 0.f; }
         
         if(!showNames) {
-            seconds += system.advance(iterations, timestep);
+            seconds += system.advance(iterations, mult*timestep);
         }
         
         system.render(renderer);
         
         if(showNames) {
-            double deltaY = 0.03 * (600.0 / double(renderer.height()));
-            double deltaX = 0.02 * (800.0 / double(renderer.width()));
-            double height = deltaY * float(names.size() + 2);
-            double width = deltaX * 10;
-            double startX = -0.48 + deltaX;
-            double startY = -((0.03 * float(names.size()))/2.0);
-            double boxY = -(deltaY) + startY;
-            
-            renderer.drawUIBox(Vector3{-0.48, boxY, 0}, Vector3{width, height, 0}, Renderer::Color::BLACK, Renderer::Color::WHITE);
-            
-            for(size_t i = 0; i < names.size(); ++i) {
-                const auto& name = names[i];
-                renderer.setColor(i == (bodyID-1)%names.size() ?
-                    Renderer::Color::PASTEL_YELLOW :
-                    Renderer::Color::WHITE);
-                renderer.drawUIString(Vector3{startX, startY + (deltaY * float(i)), 0}, name);
-            }
+            drawBodiyList(renderer, names, bodyID);
         }
         
         renderer.setColor(Renderer::Color::WHITE);
-        renderer.drawUIString(Vector3{-0.47, 0.47, 0}, dateString(seconds) +  " [@"+bodyName+"]");
+        renderer.drawUIString(Vector3{-0.47, 0.47, 0}, dateString(seconds));
         renderer.drawUIString(Vector3{-0.47, -0.47, 0}, std::to_string(iterations) + " steps/frame");
-        
-        
         return true;
     });
     
