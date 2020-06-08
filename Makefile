@@ -1,9 +1,9 @@
 TARGET		:= exo
-SUFFIX		:= 
+SUFFIX		:=
 PLATFORM	:= macOS
 
 # Compiler flags. Optmised for debugging, not speed
-CPPFLAGS	:= -O3 -std=gnu++11 -Wno-unknown-pragmas
+CPPFLAGS	:= -O3 -std=c++17 -Wno-unknown-pragmas
 LDFLAGS		:= -O3 -lSDL2_gfx -lSDL2
 
 ifeq ($(PLATFORM), win32)
@@ -18,7 +18,7 @@ BUILD_DIR	:= ./build
 TESTS_DIR	:= ./tests
 PRODUCT_DIR	:= $(BUILD_DIR)/product
 OBJECTS_DIR	:= $(BUILD_DIR)/intermediate
-INSTALL_DIR	:= $(HOME)/Dropbox/bin
+INSTALL_DIR	:= $(HOME)/bin
 
 # Simple project, we only scan one directory (no subdirectory)
 SOURCES		:= $(wildcard $(SOURCE_DIR)/*.cpp) $(wildcard $(SOURCE_DIR)/*/*.cpp)
@@ -34,11 +34,11 @@ endif
 all: $(TARGET)
 
 tests: $(PALS)
-	
+
 install: $(TARGET)
 	@echo "[installing product $(TARGET)]"
 	@cp $(PRODUCT_DIR)/$(TARGET) $(INSTALL_DIR)/$(TARGET)
-	
+
 %.json: systems/%.json $(TARGET)
 	@echo "[running $(TARGET)]"
 	@$(PRODUCT_DIR)/$(TARGET) -s 1000 -w 600 -h 480 systems/$@
